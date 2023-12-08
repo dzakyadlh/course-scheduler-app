@@ -54,7 +54,7 @@ class AddCourseActivity : AppCompatActivity(), TimePickerFragment.DialogTimeList
                 val day = findViewById<Spinner>(R.id.spinner_day).selectedItemId.toInt()
                 val startTime = findViewById<TextView>(R.id.tv_start_time).text.toString()
                 val endTime = findViewById<TextView>(R.id.tv_end_time).text.toString()
-                val lecturer = findViewById<TextView>(R.id.tv_lecturer).text.toString()
+                val lecturer = findViewById<TextView>(R.id.ed_lecturer).text.toString()
                 val note = findViewById<TextView>(R.id.ed_note).text.toString()
 
                 viewModel.insertCourse(name, day, startTime, endTime, lecturer, note)

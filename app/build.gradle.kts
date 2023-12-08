@@ -93,6 +93,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-intents:${extra["espresso_version"]}")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:${extra["espresso_version"]}")
     androidTestImplementation("com.kaspersky.android-components:kaspresso:1.5.3")
+    androidTestImplementation("org.hamcrest:hamcrest:2.2")
 
     androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestUtil("androidx.test:orchestrator:1.4.2")

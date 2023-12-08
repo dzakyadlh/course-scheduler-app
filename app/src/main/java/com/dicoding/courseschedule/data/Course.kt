@@ -15,7 +15,7 @@ import com.dicoding.courseschedule.data.DataCourseName.TABLE_NAME
 //TODO 1 : Define a local database table using the schema in app/schema/course.json
 @Entity(tableName = TABLE_NAME)
 data class Course(
-    @field:PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = COL_ID)
     val id: Int = 0,
 

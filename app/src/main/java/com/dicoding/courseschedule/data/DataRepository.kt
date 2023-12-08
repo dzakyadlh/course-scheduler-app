@@ -15,24 +15,25 @@ import java.util.Calendar
 //TODO 4 : Implement repository with appropriate dao
 class DataRepository(private val dao: CourseDao) {
 
-    fun getNearestSchedule(queryType: QueryType) : LiveData<Course?> {
+    fun getNearestSchedule(queryType: QueryType): LiveData<Course?> {
         return dao.getNearestSchedule(nearestQuery(queryType))
     }
 
     fun getAllCourse(sortType: SortType): LiveData<PagedList<Course>> {
         val factory = dao.getAll(QueryUtil.sortedQuery(sortType))
-        val config = PagedList.Config.Builder().setPageSize(PAGE_SIZE).setEnablePlaceholders(true).build()
+        val config =
+            PagedList.Config.Builder().setPageSize(PAGE_SIZE).setEnablePlaceholders(true).build()
         return LivePagedListBuilder(factory, config).build()
     }
 
-    fun getCourse(id: Int) : LiveData<Course> {
+    fun getCourse(id: Int): LiveData<Course> {
         return dao.getCourse(id)
     }
 
-    fun getTodaySchedule() : List<Course> {
-        val calendar = Calendar.getInstance()
-        val currentDay = calendar.get(Calendar.DAY_OF_WEEK)
-        return dao.getTodaySchedule(currentDay)
+    fun getTodaySchedule(day: Int): List<Course> {
+//        val calendar = Calendar.getInstance()
+//        val currentDay = calendar.get(Calendar.DAY_OF_WEEK)
+        return dao.getTodaySchedule(day)
     }
 
     fun insert(course: Course) = executeThread {

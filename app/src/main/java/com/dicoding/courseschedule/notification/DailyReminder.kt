@@ -28,11 +28,12 @@ class DailyReminder : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         executeThread {
             val repository = DataRepository.getInstance(context)
-            val courses = repository?.getTodaySchedule()
+            val courses = repository?.getTodaySchedule(Calendar.DAY_OF_WEEK)
 
             courses?.let {
                 if (it.isNotEmpty()) showNotification(context, it)
             }
+            Log.d("DReminder", "Received : Broadcast ${courses.toString()}")
         }
     }
 
@@ -46,18 +47,42 @@ class DailyReminder : BroadcastReceiver() {
         }
 
         val intent = Intent(context, DailyReminder::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+//        alarmManager.setRepeating(
+//            AlarmManager.RTC_WAKEUP,
+//            calendar.timeInMillis,
+//            AlarmManager.INTERVAL_DAY,
+//            pendingIntent
+//        )
+        alarmManager.set(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis(),
+            pendingIntent
+        )
+        Log.d("DReminder", "ALARM SET")
     }
 
     fun cancelAlarm(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, DailyReminder::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
         alarmManager.cancel(pendingIntent)
+        Log.d("DReminder", "ALARM CANCELLED")
     }
 
     private fun showNotification(context: Context, content: List<Course>) {
         //TODO 13 : Show today schedules in inbox style notification & open HomeActivity when notification tapped
+        Log.d("DReminder", "NOTIFICATION START")
         val notificationStyle = NotificationCompat.InboxStyle()
         val timeString = context.resources.getString(R.string.notification_message_format)
         content.forEach {
@@ -65,10 +90,16 @@ class DailyReminder : BroadcastReceiver() {
             notificationStyle.addLine(courseData)
         }
         val intent = Intent(context, HomeActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        val notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val notificationManager =
+            context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 NOTIFICATION_CHANNEL_NAME,
@@ -77,8 +108,12 @@ class DailyReminder : BroadcastReceiver() {
                 description = "Today's Course"
                 enableLights(true)
                 lightColor = Color.CYAN
+                enableVibration(true)
+                vibrationPattern =
+                    longArrayOf(100, 200, 300, 400, 500)
             }
             notificationManager.createNotificationChannel(channel)
+            Log.d("DReminder", "Notification Channel Created")
         }
         val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setContentTitle(context.getString(R.string.title_activity_list))
@@ -88,5 +123,6 @@ class DailyReminder : BroadcastReceiver() {
             .build()
 
         notificationManager.notify(NOTIFICATION_ID, builder)
+        Log.d("DReminder", "NOTIFICATION EXECUTED")
     }
 }
